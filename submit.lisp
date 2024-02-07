@@ -31,6 +31,8 @@
     (:cosmos "/strings/")
     (:tufts-lsf (format nil "/scratch2/~A/" (get-current-username)))
     (:tufts (format nil "/scratch/~A/" (get-current-username)))
+    (:local (format nil "/home/richard/TheoryProject/~A/" (get-current-username)))
+    (:container (format nil "/home/results/~A/" (get-current-username)))
     (:uwm (format nil "/localscratch/~A/" (get-current-username)))))
 
 ;;The pathname given to rsync will have simulation::, than this, then the relative pathname (e.g., "matter/1000")
@@ -215,7 +217,10 @@
   (apply (ecase server
 	   (:uwm #'condor-submit)
 	   (:tufts #'slurm-submit)
-	   (:tufts-lsf #'lsf-submit))
+	;    (:container #'slurm-submit)
+	   (:container #'lsf-submit)
+	   (:tufts-lsf #'lsf-submit)
+	   (:local #'lsf-submit))
 	  arguments))
 
 (defparameter all-lsf-nodes
