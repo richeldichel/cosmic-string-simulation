@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt-get update && apt-get install -y \
+        build-essential \
+        wget \
+        libffi-dev libgsl-dev pkg-config nano sudo gnuplot ffmpeg git
+
+    wget https://downloads.sourceforge.net/project/sbcl/sbcl/2.1.11/sbcl-2.1.11-x86-64-linux-binary.tar.bz2 \
+        && tar -xvf sbcl-2.1.11-x86-64-linux-binary.tar.bz2 \
+        && cd sbcl-2.1.11-x86-64-linux \
+        && sh install.sh
+
+    wget https://beta.quicklisp.org/quicklisp.lisp \
+        && sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install)' --eval '(quit)'
+
+    cd /home
+    git clone https://github.com/richeldichel/cosmic-string-simulation.git
+
+%runscript
+    cd /home/cosmic-string-simulation
+    exec /bin/bash "$@"
