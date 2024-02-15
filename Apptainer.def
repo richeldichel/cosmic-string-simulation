@@ -5,7 +5,7 @@ From: ubuntu:22.04
     apt-get update && apt-get install -y \
         build-essential \
         wget \
-        libffi-dev libgsl-dev pkg-config nano sudo gnuplot ffmpeg git
+        libffi-dev libgsl-dev pkg-config nano sudo gnuplot ffmpeg git csh
 
     wget https://downloads.sourceforge.net/project/sbcl/sbcl/2.1.11/sbcl-2.1.11-x86-64-linux-binary.tar.bz2 \
         && tar -xvf sbcl-2.1.11-x86-64-linux-binary.tar.bz2 \
@@ -17,6 +17,11 @@ From: ubuntu:22.04
 
     cd /home
     git clone https://github.com/richeldichel/cosmic-string-simulation.git
+
+    chmod -R a+rw /home/cosmic-string-simulation
+    chmod -R a+rw /home/cosmic-string-simulation/*
+
+    adduser --disabled-password --gecos "" r_salo04
 
 %runscript
     cd /home/cosmic-string-simulation
