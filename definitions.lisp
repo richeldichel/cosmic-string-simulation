@@ -40,8 +40,10 @@
          ((string-equal name "Container") :container)
 	  (t (error "Running on unknown server ~S" name))))))
 
-;;Lisp executable.  Run whatever version we are running
-(defvar lisp-program (format nil "/cluster/tufts/cosmology/sbcl-~A/run-sbcl.sh" (lisp-implementation-version)))
+;;Find lisp executable.  Run whatever version we are running
+(defvar lisp-program
+  (ecase server
+    (:tufts (format nil "/cluster/tufts/strings/sbcl-~A/run-sbcl.sh" (lisp-implementation-version)))))
 
 ;;Macro definitions
 ;;Once-only macro that binds the extra variables only if they are needed.
