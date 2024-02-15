@@ -32,7 +32,7 @@
     (:tufts-lsf (format nil "/scratch2/~A/" (get-current-username)))
     (:tufts (format nil "/scratch/~A/" (get-current-username)))
     (:local (format nil "/home/richard/TheoryProject/~A/" (get-current-username)))
-    (:container (format nil "/home/results/~A/" (get-current-username)))
+    (:container (format nil "/mnt/"))
     (:uwm (format nil "/localscratch/~A/" (get-current-username)))))
 
 ;;The pathname given to rsync will have simulation::, than this, then the relative pathname (e.g., "matter/1000")
@@ -218,8 +218,8 @@
   (apply (ecase server
 	   (:uwm #'condor-submit)
 	   (:tufts #'slurm-submit)
-	;    (:container #'slurm-submit)
-	   (:container #'lsf-submit)
+	   (:container #'slurm-submit)
+	;    (:container #'lsf-submit)
 	   (:tufts-lsf #'lsf-submit)
 	   (:local #'lsf-submit))
 	  arguments))
@@ -297,9 +297,13 @@
      (format stream "#!/bin/csh~%")
      ;;exec here causes the shell to be replaced by the program.  Then when the job is preempted, the SIGTERM
      ;;doesn't terminate the shell but instead goes to lisp, which handles it cleanly
-     (format stream "exec ~A ~{~A ~}~%" lisp-program
-	     ;;Since this is being processed by shell, arguments (may) need quoting
-	     (mapcar #'quote-shell-metacharacters (lisp-batch-arguments form load-file)))
+     (case server
+         (:container
+             (format stream "apptainer run --writable-tmpfs --hostname Container --bind ~A:~A cosmic-string-simulation.sif exec ~A ~{~A ~}~%" bind-directory batch-root-directory lisp-program
+             (mapcar #'quote-shell-metacharacters (lisp-batch-arguments form load-file))))
+         (t
+             (format stream "~A ~{~A ~}~%" lisp-program
+             (mapcar #'quote-shell-metacharacters (lisp-batch-arguments form load-file)))))
      (unless *debug-submit* (close stream))
      (wait-for-program handle))))
 

@@ -42,8 +42,9 @@
 
 ;;Find lisp executable.  Run whatever version we are running
 (defvar lisp-program
-  (ecase server
-    (:tufts (format nil "/cluster/tufts/strings/sbcl-~A/run-sbcl.sh" (lisp-implementation-version)))))
+    (ecase server
+        (:tufts (format nil "/cluster/tufts/strings/sbcl-~A/run-sbcl.sh" (lisp-implementation-version)))
+        (:container "sbcl")))
 
 ;;Macro definitions
 ;;Once-only macro that binds the extra variables only if they are needed.
@@ -680,8 +681,17 @@
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
     ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
-    ((:container :container-lsf) "/home/results/")
+    ((:container :container-lsf) "/mnt/")
     (:uwm "/home/kdo/strings/")))
+
+(defparameter bind-directory
+  (ecase server
+    ; (:cosmos "/strings/")
+    ; ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
+    ; ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
+    ((:container :container-lsf) "/scratch/tmp/r_salo04/simulations/")
+    ; (:uwm "/home/kdo/strings/")
+    ))
 
 ;;Allow other members of the simulation group to modify files
 (defmacro with-group-write-access (&body body)
