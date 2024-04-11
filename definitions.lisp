@@ -28,6 +28,7 @@
     (cond ((string-equal "cosmos.phy.tufts.edu" name) :cosmos)
 	  ((string-equal "cosmos" name) :cosmos)
 	  ((search ".uwm.edu" name) :uwm)
+      ((search ".palma.wwu" name) :palma)
 	  ((probe-file "/cluster/tufts") ;Tufts?
 	   (cond ((posix-getenv "SLURM_JOB_ID") ;Running under slurm
 		  :tufts)
@@ -44,7 +45,8 @@
 (defvar lisp-program
     (ecase server
         (:tufts (format nil "/cluster/tufts/strings/sbcl-~A/run-sbcl.sh" (lisp-implementation-version)))
-        (:container "sbcl")))
+        (:container "sbcl")
+        (:palma "sbcl")))
 
 ;;Macro definitions
 ;;Once-only macro that binds the extra variables only if they are needed.
@@ -580,13 +582,14 @@
 ;;New tufts cluster does not support scratch-over-NFS.
 ;;(defparameter *local-data-files* (if (eq server :tufts) :rsync :nfs))
 ; (defparameter *local-data-files* (if (eq server :tufts) nil :nfs))
-(defparameter *local-data-files* (if (eq server :local) nil :nfs))
+; (defparameter *local-data-files* (if (eq server :local) nil :nfs))
+(defparameter *local-data-files* (if (eq server :palma) nil :nfs))
 
 ;;On some systems is possible to run a backrub process which persists after all batch jobs have exited.
 ;;On others (e.g., Tufts), you cannot do that, so we have to resort to running the server only one worker is alive
 ;;and consequently we must keep the worker alive until the run is finished.
 ; (defparameter *permanent-rsync-server* (not (eq server :tufts)))
-(defparameter *permanent-rsync-server* (not (eq server :local)))
+(defparameter *permanent-rsync-server* (not (eq server :palma)))
 
 ;;The top-level directory (without worker-N) in which we're working.
 ;;If *LOCAL-DATA-FILES* is :NFS, this is where we look for input files.
@@ -680,17 +683,19 @@
   (ecase server
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
+    ((:palma :palma-lsf) "/scratch/tmp/r_salo04/")
     ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
     ((:container :container-lsf) "/mnt/")
     (:uwm "/home/kdo/strings/")))
 
 (defparameter bind-directory
   (ecase server
-    ; (:cosmos "/strings/")
-    ; ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
-    ; ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
+    (:cosmos "/strings/")
+    ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
+    ((:palma :palma-lsf) "/scratch/tmp/r_salo04/strings/")
+    ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
     ((:container :container-lsf) "/scratch/tmp/r_salo04/simulations/")
-    ; (:uwm "/home/kdo/strings/")
+    (:uwm "/home/kdo/strings/")
     ))
 
 ;;Allow other members of the simulation group to modify files

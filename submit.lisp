@@ -23,7 +23,7 @@
 ;;Time limit for batch jobs.  Quantum 1 minute.  Reasonable formats are minutes,
 ;;hours:minutes:seconds, days-hours, days-hours:minutes.  You can't use hours:minutes, because it would be
 ;;interpreted as minutes:seconds.
-(defvar *batch-time-limit* "7-0")	;7 days
+(defvar *batch-time-limit* "1-0")	;7 days
 
 ;;Local scratch directory
 (defparameter local-root-directory
@@ -31,6 +31,7 @@
     (:cosmos "/strings/")
     (:tufts-lsf (format nil "/scratch2/~A/" (get-current-username)))
     (:tufts (format nil "/scratch/~A/" (get-current-username)))
+    (:palma (format nil "/scratch/tmp/~A/" (get-current-username)))
     (:local (format nil "/home/richard/TheoryProject/~A/" (get-current-username)))
     (:container (format nil "/mnt/"))
     (:uwm (format nil "/localscratch/~A/" (get-current-username)))))
@@ -219,7 +220,7 @@
 	   (:uwm #'condor-submit)
 	   (:tufts #'slurm-submit)
 	   (:container #'slurm-submit)
-	;    (:container #'lsf-submit)
+	   (:palma #'slurm-submit)
 	   (:tufts-lsf #'lsf-submit)
 	   (:local #'lsf-submit))
 	  arguments))
@@ -299,7 +300,7 @@
      ;;doesn't terminate the shell but instead goes to lisp, which handles it cleanly
      (case server
          (:container
-             (format stream "apptainer run --writable-tmpfs --hostname Container --bind ~A:~A cosmic-string-simulation.sif exec ~A ~{~A ~}~%" bind-directory batch-root-directory lisp-program
+             (format stream "apptainer run --writable-tmpfs --hostname Container -B /usr/lib64/libreadline.so.6,/usr/lib64/libhistory.so.6,/usr/lib64/libtinfo.so.5,/var/run/munge,/usr/lib64/libmunge.so.2,/usr/lib64/libmunge.so.2.0.0,/run/munge,/etc/munge,/usr/lib64/slurm/,/etc/slurm,/usr/bin/sinfo,/usr/bin/squeue,/usr/bin/sbatch,/usr/bin/srun,/usr/bin/salloc --bind ~A:~A cosmic-string-simulation.sif exec ~A ~{~A ~}~%" bind-directory batch-root-directory lisp-program
              (mapcar #'quote-shell-metacharacters (lisp-batch-arguments form load-file))))
          (t
              (format stream "~A ~{~A ~}~%" lisp-program
