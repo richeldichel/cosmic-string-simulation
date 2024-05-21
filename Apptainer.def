@@ -23,6 +23,10 @@ From: ubuntu:22.04
 
     adduser --disabled-password --gecos "" r_salo04
 
+    export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
+    echo "slurm:x:300:" >> /etc/group
+    echo "slurm:x:300:300::/opt/slurm/slurm:/bin/false" >> /etc/passwd
+
 %runscript
     cd /home/cosmic-string-simulation
     exec /bin/bash "$@"
