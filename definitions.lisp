@@ -37,7 +37,6 @@
 		 ((string-equal name "login" :end1 (min (length name) 5)) ;head node
 		  :tufts)
 		 (t (error "Running on unknown tufts machine ~S" name))))
-         ((string-equal name "EnvyLaptop") :local)
          ((string-equal name "Container") :container)
 	  (t (error "Running on unknown server ~S" name))))))
 
@@ -582,7 +581,6 @@
 ;;New tufts cluster does not support scratch-over-NFS.
 ;;(defparameter *local-data-files* (if (eq server :tufts) :rsync :nfs))
 ; (defparameter *local-data-files* (if (eq server :tufts) nil :nfs))
-; (defparameter *local-data-files* (if (eq server :local) nil :nfs))
 (defparameter *local-data-files* (if (eq server :palma) nil :nfs))
 
 ;;On some systems is possible to run a backrub process which persists after all batch jobs have exited.
@@ -683,25 +681,23 @@
   (ecase server
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
-    ((:palma :palma-lsf) "/scratch/tmp/r_salo04/")
-    ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
-    ((:container :container-lsf) "/mnt/")
+    ((:palma) "/scratch/tmp/r_salo04/")
+    ((:container) "/mnt/")
     (:uwm "/home/kdo/strings/")))
 
 (defparameter bind-directory
   (ecase server
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
-    ((:palma :palma-lsf) "/scratch/tmp/r_salo04/strings/")
-    ((:local :local-lsf) "/home/richard/TheoryProject/strings/")
-    ((:container :container-lsf) "/scratch/tmp/r_salo04/simulations/")
+    ((:palma ) "/scratch/tmp/r_salo04/strings/")
+    ((:container) "/scratch/tmp/r_salo04/simulations/")
     (:uwm "/home/kdo/strings/")
     ))
 
 ;;Allow other members of the simulation group to modify files
 (defmacro with-group-write-access (&body body)
   (case server
-    ((:tufts :tufts-lsf :cosmos :local :container)
+    ((:tufts :tufts-lsf :cosmos :container)
      `(let (*previous-umask*)		;Rebind this variable so macro can be used recursively
 	(setq *previous-umask* (umask 2)) ;Allow group access to files written by lisp.  Remember previous mask
 	(unwind-protect (progn ,@body)

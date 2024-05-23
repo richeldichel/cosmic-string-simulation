@@ -32,7 +32,6 @@
     (:tufts-lsf (format nil "/scratch2/~A/" (get-current-username)))
     (:tufts (format nil "/scratch/~A/" (get-current-username)))
     (:palma (format nil "/scratch/tmp/~A/" (get-current-username)))
-    (:local (format nil "/home/richard/TheoryProject/~A/" (get-current-username)))
     (:container (format nil "/mnt/"))
     (:uwm (format nil "/localscratch/~A/" (get-current-username)))))
 
@@ -222,7 +221,6 @@
 	   (:container #'slurm-submit)
 	   (:palma #'slurm-submit)
 	   (:tufts-lsf #'lsf-submit)
-	   (:local #'lsf-submit))
 	  arguments))
 
 (defparameter all-lsf-nodes

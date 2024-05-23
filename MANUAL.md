@@ -98,6 +98,12 @@ default the time from the size of the run.
 
 The simulation will run until all the workers are done. The output will be written to the specified directory.
 
+It is possible to script the execution of the simulation so that you only have to submit a regular slurm script to the cluster. In a shell one can invoke sbcl with the following command: 
+```bash
+sbcl --load "load.lisp" --eval <command>
+```
+Multiple `--eval` commands can be chained together. They will be executed sequentially in the order they are passed. 
+
 ### Step 4: Plotting the data
 
 There are many functions available to organize and plot the data. The plotting functions are defined in [plot.lisp](plot.lisp). To do a simple plot one can execute the following commands: 
@@ -126,7 +132,8 @@ apptainer run --writable-tmpfs --hostname Container \
 /usr/bin/srun,/usr/bin/salloc --bind /scratch/tmp/r_salo04/simulations/:/mnt \
 cosmic-string-simulation.sif
 ```
-This rather lengthy command binds the necessary slurm directories to the container. This way, the container can interact with the slurm scheduler. Furthermore, the output directory is bound to the container. Make sure that you modify the output directory to your needs.
+This rather lengthy command binds the necessary slurm directories to the container. This way, the container can interact with the slurm scheduler. Furthermore, the output directory is bound to the container. Make sure that you modify the output directory to your needs. The hostname of the container is set to 'Container', which is checked during the program's runtime to set all the necessary parameters as seen in the above section. If this solution worked it would solve the tedious changes to the source code prior to the installation since the environment at runtime would always be the same.
+
 
 After that, a bash session is available inside the container, where the commands from step 3 and 4 can be executed. 
 
