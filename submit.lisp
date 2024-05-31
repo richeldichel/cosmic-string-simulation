@@ -220,7 +220,7 @@
 	   (:tufts #'slurm-submit)
 	   (:container #'slurm-submit)
 	   (:palma #'slurm-submit)
-	   (:tufts-lsf #'lsf-submit)
+	   (:tufts-lsf #'lsf-submit))
 	  arguments))
 
 (defparameter all-lsf-nodes

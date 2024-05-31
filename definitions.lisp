@@ -681,7 +681,7 @@
   (ecase server
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
-    ((:palma) "/scratch/tmp/r_salo04/")
+    ((:palma) (format nil "/scratch/tmp/~A/" (get-current-username)))
     ((:container) "/mnt/")
     (:uwm "/home/kdo/strings/")))
 
@@ -689,8 +689,8 @@
   (ecase server
     (:cosmos "/strings/")
     ((:tufts :tufts-lsf) "/cluster/tufts/strings/")
-    ((:palma ) "/scratch/tmp/r_salo04/strings/")
-    ((:container) "/scratch/tmp/r_salo04/simulations/")
+    ((:palma ) (format nil "/scratch/tmp/~A/" (get-current-username)))
+    ((:container) (format nil "/scratch/tmp/~A/" (get-current-username)))
     (:uwm "/home/kdo/strings/")
     ))
 
